@@ -7,7 +7,7 @@ const OthelloTable = () => {
   const [isBlackTurn, setIsBlackTurn] = useState(true);
 
   useEffect(() => {
-    setCells((prev) => [...prev.slice(0, 3), [0, 0, 0, 2, 1, 0, 0, 0], [0, 0, 0, 1, 2, 0, 0, 0], ...prev.slice(5)]);
+    setCells((prev) => [...prev.slice(0, 3), [0, 0, 0, 2, 1, 0, 0, 0], [0, 0, 0, 1, 1, 0, 0, 0], ...prev.slice(5)]);
   }, []);
 
   const onClickCell = useCallback(
@@ -33,6 +33,7 @@ const OthelloTable = () => {
 
   return (
     <>
+      <h1>{isBlackTurn ? 'Black Turn' : 'White Turn'}</h1>
       {cells.map((row: number[], y) => (
         <Row key={y}>
           {row.map((item: number, x) => (
