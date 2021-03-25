@@ -14,6 +14,14 @@ export const Item = styled.div`
   align-items: center;
 `;
 
+export const ShowCanPut = styled.div`
+  width: 20%;
+  height: 20%;
+  border-radius: 50%;
+  background-color: rgba(255, 0, 0, 0.8);
+  box-shadow: 0 0 5px red;
+`;
+
 interface Props {
   item: number;
 }

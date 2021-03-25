@@ -1,16 +1,32 @@
-export const canPut = (x: number, y: number, cells: number[][], turn: number) => {
+import { cellsAtom } from '@components/OthelloTable';
+import { atom, useAtom } from 'jotai';
+
+const getCellsAtom = atom((get) => get(cellsAtom));
+const [cellss] = useAtom(getCellsAtom);
+
+export const canPut = (x: number, y: number, cells: number[][], turn: number, setCells: React.Dispatch<React.SetStateAction<number[][]>>) => {
   if (cells[y][x] !== 0) return false;
+  console.log(cellss);
+  if (x === -1) setCells([...cells]);
   return (
-    checkRightCells(x, y, cells, turn) ||
-    checkLeftCells(x, y, cells, turn) ||
-    checkUpCells(x, y, cells, turn) ||
-    checkDownCells(x, y, cells, turn) ||
-    checkRightDownCells(x, y, cells, turn)
-    // checkLeftUpCells(x, y, cells, turn)
+    checkRightCells(x, y, cells, turn, setCells) ||
+    checkLeftCells(x, y, cells, turn, setCells) ||
+    checkUpCells(x, y, cells, turn, setCells) ||
+    checkDownCells(x, y, cells, turn, setCells) ||
+    checkRightDownCells(x, y, cells, turn, setCells) ||
+    checkLeftUpCells(x, y, cells, turn, setCells) ||
+    checkRightUpCells(x, y, cells, turn, setCells) ||
+    checkLeftDownCells(x, y, cells, turn, setCells)
   );
 };
 
-const checkLeftCells = (x: number, y: number, cells: number[][], turn: number): boolean => {
+const checkLeftCells = (
+  x: number,
+  y: number,
+  cells: number[][],
+  turn: number,
+  setCells: React.Dispatch<React.SetStateAction<number[][]>>
+): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   if (x === 0) {
     console.log('맨 왼쪽 끝임');
@@ -28,15 +44,27 @@ const checkLeftCells = (x: number, y: number, cells: number[][], turn: number): 
       return false;
     }
     if (cells[y][i] === turn) {
-      console.log('왼쪽 중간에 다른 돌이 있고 그 돌이 나랑같음');
+      console.log('checkLeftCells 왼쪽 중간에 다른 돌이 있고 그 돌이 나랑같음 true');
+      // for (let j = x - 1; j > i; j--) {
+      // const element = cells[y][j];
+      // }
+      // setCells(Array(8).fill(Array(8).fill(0)));
+      const newCells = [...cells];
+      console.log(newCells);
+      // return [true, newCells];
       return true;
     }
   }
-  console.log('모든 조건 통과');
-  return true;
+  return false;
 };
 
-const checkRightCells = (x: number, y: number, cells: number[][], turn: number): boolean => {
+const checkRightCells = (
+  x: number,
+  y: number,
+  cells: number[][],
+  turn: number,
+  setCells: React.Dispatch<React.SetStateAction<number[][]>>
+): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   if (x === cells[y].length - 1) {
     console.log('맨 오른쪽 끝임');
@@ -58,11 +86,10 @@ const checkRightCells = (x: number, y: number, cells: number[][], turn: number):
       return true;
     }
   }
-  console.log('모든 조건 통과');
-  return true;
+  return false;
 };
 
-const checkUpCells = (x: number, y: number, cells: number[][], turn: number): boolean => {
+const checkUpCells = (x: number, y: number, cells: number[][], turn: number, setCells: React.Dispatch<React.SetStateAction<number[][]>>): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   if (y === 0) {
     console.log('맨 위임');
@@ -84,11 +111,16 @@ const checkUpCells = (x: number, y: number, cells: number[][], turn: number): bo
       return true;
     }
   }
-  console.log('모든 조건 통과');
-  return true;
+  return false;
 };
 
-const checkDownCells = (x: number, y: number, cells: number[][], turn: number): boolean => {
+const checkDownCells = (
+  x: number,
+  y: number,
+  cells: number[][],
+  turn: number,
+  setCells: React.Dispatch<React.SetStateAction<number[][]>>
+): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   console.log(y);
   if (y === cells[y].length - 1) {
@@ -111,18 +143,22 @@ const checkDownCells = (x: number, y: number, cells: number[][], turn: number): 
       return true;
     }
   }
-  console.log('모든 조건 통과');
-  return true;
+  return false;
 };
 
-const checkRightDownCells = (x: number, y: number, cells: number[][], turn: number): boolean => {
+const checkRightDownCells = (
+  x: number,
+  y: number,
+  cells: number[][],
+  turn: number,
+  setCells: React.Dispatch<React.SetStateAction<number[][]>>
+): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
-  if (x === cells[y].length - 1 && y === cells.length - 1) {
-    console.log('맨 오른쪽 밑임');
+  if (x === cells[y].length - 1 || y === cells.length - 1) {
+    console.log('맨 밑이거나 오른쪽 임');
     return false;
   }
 
-  console.log(y + 1, x + 1);
   if (turn === cells[y + 1][x + 1]) {
     console.log('오른쪽 밑에 돌이 나랑 같음');
     return false;
@@ -143,14 +179,19 @@ const checkRightDownCells = (x: number, y: number, cells: number[][], turn: numb
       }
     }
   }
-  console.log('모든 조건 통과');
-  return true;
+  return false;
 };
 
-const checkLeftUpCells = (x: number, y: number, cells: number[][], turn: number): boolean => {
+const checkLeftUpCells = (
+  x: number,
+  y: number,
+  cells: number[][],
+  turn: number,
+  setCells: React.Dispatch<React.SetStateAction<number[][]>>
+): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
-  if (x === 0 && y === 0) {
-    console.log('맨 왼쪽 위임');
+  if (x === 0 || y === 0) {
+    console.log('맨 왼쪽이거나 맨 위임');
     return false;
   }
 
@@ -173,6 +214,78 @@ const checkLeftUpCells = (x: number, y: number, cells: number[][], turn: number)
       }
     }
   }
-  console.log('모든 조건 통과');
-  return true;
+  return false;
+};
+
+const checkRightUpCells = (
+  x: number,
+  y: number,
+  cells: number[][],
+  turn: number,
+  setCells: React.Dispatch<React.SetStateAction<number[][]>>
+): boolean => {
+  // 바로 옆 돌이 자신의 돌이면 return false
+  if (x === cells[y].length || y === 0) {
+    console.log('맨 오른쪽이거나 맨 위임');
+    return false;
+  }
+
+  if (turn === cells[y - 1][x + 1]) {
+    console.log('오른쪽 위에 돌이 나랑 같음');
+    return false;
+  }
+  // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 return false
+  for (let i = y - 1; i >= 0; i--) {
+    for (let j = x + 1; j < cells[i].length; j++) {
+      if (i + j === y + x) {
+        if (cells[i][j] === 0) {
+          console.log('오른쪽 위에 돌이 비었음');
+          return false;
+        }
+        console.log(i, j);
+        if (cells[i][j] === turn) {
+          console.log('오른 위 중간에 다른 돌이 있고 그 돌이 나랑같음');
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+};
+
+const checkLeftDownCells = (
+  x: number,
+  y: number,
+  cells: number[][],
+  turn: number,
+  setCells: React.Dispatch<React.SetStateAction<number[][]>>
+): boolean => {
+  // 바로 옆 돌이 자신의 돌이면 return false
+  if (x === 0 || y === cells.length - 1) {
+    console.log('맨 왼쪽이거나 맨 밑임');
+    return false;
+  }
+
+  if (turn === cells[y + 1][x - 1]) {
+    console.log('오른쪽 위에 돌이 나랑 같음');
+    return false;
+  }
+  // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 return false
+  for (let i = y + 1; i < cells.length; i++) {
+    for (let j = x - 1; j >= 0; j--) {
+      if (i + j === y + x) {
+        if (cells[i][j] === 0) {
+          console.log('왼쪽 밑에 돌이 비었음');
+          return false;
+        }
+        console.log(i, j);
+        if (cells[i][j] === turn) {
+          console.log('왼쪽 밑 중간에 다른 돌이 있고 그 돌이 나랑같음');
+          return true;
+        }
+      }
+    }
+  }
+  console.log('ㄲㅈ');
+  return false;
 };
