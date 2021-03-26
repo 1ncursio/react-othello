@@ -1,39 +1,36 @@
-import { cellsAtom } from '@components/OthelloTable';
-import { atom, useAtom } from 'jotai';
-
-const getCellsAtom = atom((get) => get(cellsAtom));
-const [cellss] = useAtom(getCellsAtom);
-
-export const canPut = (x: number, y: number, cells: number[][], turn: number, setCells: React.Dispatch<React.SetStateAction<number[][]>>) => {
+const cells = [[]];
+const canPut = (x: number, y: number, stoneId: number, turn: boolean = true) => {
   if (cells[y][x] !== 0) return false;
-  console.log(cellss);
-  if (x === -1) setCells([...cells]);
+
+  const canTurnOverRight = checkRightCells(x, y, stoneId, turn);
+  const canTurnOverLeft = checkLeftCells(x, y, stoneId, turn);
+  const canTurnOverUp = checkUpCells(x, y, stoneId, turn);
+  const canTurnOverDown = checkDownCells(x, y, stoneId, turn);
+  const canTurnOverRightDown = checkRightDownCells(x, y, stoneId, turn);
+  const canTurnOverLeftUp = checkLeftUpCells(x, y, stoneId, turn);
+  const canTurnOverRightUp = checkRightUpCells(x, y, stoneId, turn);
+  const canTurnOverLeftDown = checkLeftDownCells(x, y, stoneId, turn);
+
   return (
-    checkRightCells(x, y, cells, turn, setCells) ||
-    checkLeftCells(x, y, cells, turn, setCells) ||
-    checkUpCells(x, y, cells, turn, setCells) ||
-    checkDownCells(x, y, cells, turn, setCells) ||
-    checkRightDownCells(x, y, cells, turn, setCells) ||
-    checkLeftUpCells(x, y, cells, turn, setCells) ||
-    checkRightUpCells(x, y, cells, turn, setCells) ||
-    checkLeftDownCells(x, y, cells, turn, setCells)
+    canTurnOverRight ||
+    canTurnOverLeft ||
+    canTurnOverUp ||
+    canTurnOverDown ||
+    canTurnOverRightDown ||
+    canTurnOverLeftUp ||
+    canTurnOverRightUp ||
+    canTurnOverLeftDown
   );
 };
 
-const checkLeftCells = (
-  x: number,
-  y: number,
-  cells: number[][],
-  turn: number,
-  setCells: React.Dispatch<React.SetStateAction<number[][]>>
-): boolean => {
+const checkLeftCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   if (x === 0) {
     console.log('맨 왼쪽 끝임');
     return false;
   }
 
-  if (turn === cells[y][x - 1]) {
+  if (stoneId === cells[y][x - 1]) {
     console.log('왼쪽 돌이 나랑 같음');
     return false;
   }
@@ -43,35 +40,22 @@ const checkLeftCells = (
       console.log('왼쪽 돌이 비었음');
       return false;
     }
-    if (cells[y][i] === turn) {
+    if (cells[y][i] === stoneId) {
       console.log('checkLeftCells 왼쪽 중간에 다른 돌이 있고 그 돌이 나랑같음 true');
-      // for (let j = x - 1; j > i; j--) {
-      // const element = cells[y][j];
-      // }
-      // setCells(Array(8).fill(Array(8).fill(0)));
-      const newCells = [...cells];
-      console.log(newCells);
-      // return [true, newCells];
       return true;
     }
   }
   return false;
 };
 
-const checkRightCells = (
-  x: number,
-  y: number,
-  cells: number[][],
-  turn: number,
-  setCells: React.Dispatch<React.SetStateAction<number[][]>>
-): boolean => {
+const checkRightCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   if (x === cells[y].length - 1) {
     console.log('맨 오른쪽 끝임');
     return false;
   }
 
-  if (turn === cells[y][x + 1]) {
+  if (stoneId === cells[y][x + 1]) {
     console.log('오른쪽 돌이 나랑 같음');
     return false;
   }
@@ -81,7 +65,7 @@ const checkRightCells = (
       console.log('오른쪽 돌이 비었음');
       return false;
     }
-    if (cells[y][i] === turn) {
+    if (cells[y][i] === stoneId) {
       console.log('오른쪽 중간에 다른 돌이 있고 그 돌이 나랑같음');
       return true;
     }
@@ -89,14 +73,14 @@ const checkRightCells = (
   return false;
 };
 
-const checkUpCells = (x: number, y: number, cells: number[][], turn: number, setCells: React.Dispatch<React.SetStateAction<number[][]>>): boolean => {
+const checkUpCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   if (y === 0) {
     console.log('맨 위임');
     return false;
   }
 
-  if (turn === cells[y - 1][x]) {
+  if (stoneId === cells[y - 1][x]) {
     console.log('위에 돌이 나랑 같음');
     return false;
   }
@@ -106,7 +90,7 @@ const checkUpCells = (x: number, y: number, cells: number[][], turn: number, set
       console.log('밑쪽 돌이 비었음');
       return false;
     }
-    if (cells[i][x] === turn) {
+    if (cells[i][x] === stoneId) {
       console.log('밑쪽 중간에 다른 돌이 있고 그 돌이 나랑같음');
       return true;
     }
@@ -114,13 +98,7 @@ const checkUpCells = (x: number, y: number, cells: number[][], turn: number, set
   return false;
 };
 
-const checkDownCells = (
-  x: number,
-  y: number,
-  cells: number[][],
-  turn: number,
-  setCells: React.Dispatch<React.SetStateAction<number[][]>>
-): boolean => {
+const checkDownCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   console.log(y);
   if (y === cells[y].length - 1) {
@@ -128,7 +106,7 @@ const checkDownCells = (
     return false;
   }
 
-  if (turn === cells[y + 1][x]) {
+  if (stoneId === cells[y + 1][x]) {
     console.log('밑에 돌이 나랑 같음');
     return false;
   }
@@ -138,7 +116,7 @@ const checkDownCells = (
       console.log('밑쪽 돌이 비었음');
       return false;
     }
-    if (cells[i][x] === turn) {
+    if (cells[i][x] === stoneId) {
       console.log('밑쪽 중간에 다른 돌이 있고 그 돌이 나랑같음');
       return true;
     }
@@ -146,20 +124,14 @@ const checkDownCells = (
   return false;
 };
 
-const checkRightDownCells = (
-  x: number,
-  y: number,
-  cells: number[][],
-  turn: number,
-  setCells: React.Dispatch<React.SetStateAction<number[][]>>
-): boolean => {
+const checkRightDownCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   if (x === cells[y].length - 1 || y === cells.length - 1) {
     console.log('맨 밑이거나 오른쪽 임');
     return false;
   }
 
-  if (turn === cells[y + 1][x + 1]) {
+  if (stoneId === cells[y + 1][x + 1]) {
     console.log('오른쪽 밑에 돌이 나랑 같음');
     return false;
   }
@@ -172,7 +144,7 @@ const checkRightDownCells = (
           console.log('오른쪽 밑에 돌이 비었음');
           return false;
         }
-        if (cells[i][j] === turn) {
+        if (cells[i][j] === stoneId) {
           console.log('오른쪽 밑 중간에 다른 돌이 있고 그 돌이 나랑같음');
           return true;
         }
@@ -182,20 +154,14 @@ const checkRightDownCells = (
   return false;
 };
 
-const checkLeftUpCells = (
-  x: number,
-  y: number,
-  cells: number[][],
-  turn: number,
-  setCells: React.Dispatch<React.SetStateAction<number[][]>>
-): boolean => {
+const checkLeftUpCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   if (x === 0 || y === 0) {
     console.log('맨 왼쪽이거나 맨 위임');
     return false;
   }
 
-  if (turn === cells[y - 1][x - 1]) {
+  if (stoneId === cells[y - 1][x - 1]) {
     console.log('왼쪽 위에 돌이 나랑 같음');
     return false;
   }
@@ -207,7 +173,7 @@ const checkLeftUpCells = (
           console.log('왼쪽 위에 돌이 비었음');
           return false;
         }
-        if (cells[i][j] === turn) {
+        if (cells[i][j] === stoneId) {
           console.log('왼쪽 위 중간에 다른 돌이 있고 그 돌이 나랑같음');
           return true;
         }
@@ -217,20 +183,14 @@ const checkLeftUpCells = (
   return false;
 };
 
-const checkRightUpCells = (
-  x: number,
-  y: number,
-  cells: number[][],
-  turn: number,
-  setCells: React.Dispatch<React.SetStateAction<number[][]>>
-): boolean => {
+const checkRightUpCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   if (x === cells[y].length || y === 0) {
     console.log('맨 오른쪽이거나 맨 위임');
     return false;
   }
 
-  if (turn === cells[y - 1][x + 1]) {
+  if (stoneId === cells[y - 1][x + 1]) {
     console.log('오른쪽 위에 돌이 나랑 같음');
     return false;
   }
@@ -243,7 +203,7 @@ const checkRightUpCells = (
           return false;
         }
         console.log(i, j);
-        if (cells[i][j] === turn) {
+        if (cells[i][j] === stoneId) {
           console.log('오른 위 중간에 다른 돌이 있고 그 돌이 나랑같음');
           return true;
         }
@@ -253,20 +213,14 @@ const checkRightUpCells = (
   return false;
 };
 
-const checkLeftDownCells = (
-  x: number,
-  y: number,
-  cells: number[][],
-  turn: number,
-  setCells: React.Dispatch<React.SetStateAction<number[][]>>
-): boolean => {
+const checkLeftDownCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
   // 바로 옆 돌이 자신의 돌이면 return false
   if (x === 0 || y === cells.length - 1) {
     console.log('맨 왼쪽이거나 맨 밑임');
     return false;
   }
 
-  if (turn === cells[y + 1][x - 1]) {
+  if (stoneId === cells[y + 1][x - 1]) {
     console.log('오른쪽 위에 돌이 나랑 같음');
     return false;
   }
@@ -279,7 +233,7 @@ const checkLeftDownCells = (
           return false;
         }
         console.log(i, j);
-        if (cells[i][j] === turn) {
+        if (cells[i][j] === stoneId) {
           console.log('왼쪽 밑 중간에 다른 돌이 있고 그 돌이 나랑같음');
           return true;
         }
