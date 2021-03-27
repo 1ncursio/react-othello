@@ -14,16 +14,6 @@ const OthelloTable = () => {
   const [whiteCount] = useAtom(whiteCountAtom);
 
   useEffect(() => {
-    // 초기 돌 세팅
-    setCells(
-      produce((draft) => {
-        [draft[3][3], draft[3][4]] = [1, 2];
-        [draft[4][3], draft[4][4]] = [2, 1];
-      })
-    );
-  }, []);
-
-  useEffect(() => {
     if (count === 0) setIsBlackTurn((prev) => !prev);
   }, [count]);
 
