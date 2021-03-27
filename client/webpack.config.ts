@@ -7,7 +7,7 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const config: webpack.Configuration = {
-  name: 'sleact',
+  name: 'react-othello',
   mode: isDevelopment ? 'development' : 'production',
   devtool: !isDevelopment ? 'hidden-source-map' : 'inline-source-map',
   resolve: {
@@ -19,6 +19,7 @@ const config: webpack.Configuration = {
       '@pages': path.resolve(__dirname, 'pages'),
       '@utils': path.resolve(__dirname, 'utils'),
       '@typings': path.resolve(__dirname, 'typings'),
+      '@atoms': path.resolve(__dirname, 'atoms'),
     },
   },
   entry: {

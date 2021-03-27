@@ -1,27 +1,31 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Item, Row, ShowCanPut, Stone } from './styles';
+import { Item, Row, Stone } from './styles';
 import { atom, useAtom } from 'jotai';
 import produce from 'immer';
-
-export const cellsAtom = atom(Array(8).fill(Array(8).fill(0)));
+import CanPutDot from '@components/CanPutDot';
+import { countAtom, cellsAtom } from '@atoms/';
 
 const OthelloTable = () => {
   const [cells, setCells] = useAtom(cellsAtom);
   const [isBlackTurn, setIsBlackTurn] = useState(true);
+  const [count] = useAtom(countAtom);
 
   useEffect(() => {
     // 초기 돌 세팅
     setCells(
       produce((draft) => {
-        draft[3][3] = 1;
-        draft[4][4] = 1;
-        draft[3][4] = 2;
-        draft[4][3] = 2;
+        [draft[3][3], draft[3][4]] = [1, 2];
+        [draft[4][3], draft[4][4]] = [2, 1];
       })
     );
   }, []);
 
+  useEffect(() => {
+    if (count === 0) setIsBlackTurn((prev) => !prev);
+  }, [count]);
+
   const canPut = (x: number, y: number, stoneId: number, turn: boolean = true) => {
+    // 이미 돌이 있다면 return false
     if (cells[y][x] !== 0) return false;
 
     const canTurnOverRight = checkRightCells(x, y, stoneId, turn);
@@ -46,19 +50,18 @@ const OthelloTable = () => {
   };
 
   const checkRightCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
-    // 바로 옆 돌이 자신의 돌이면 return false
-    if (x === cells[y].length - 1) {
-      return false;
-    }
+    // 맨 오른쪽 돌이면 false
+    if (x === cells[y].length - 1) return false;
 
-    if (stoneId === cells[y][x + 1]) {
-      return false;
-    }
-    // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 return false
+    // 바로 옆 돌이 자신의 돌이면 false
+    if (stoneId === cells[y][x + 1]) return false;
+
+    // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 false
     for (let i = x + 1; i < cells[y].length; i++) {
       if (cells[y][i] === 0) {
         return false;
       }
+
       if (cells[y][i] === stoneId) {
         if (turn) {
           console.log('오른쪽 중간에 다른 돌이 있고 그 돌이 나랑같음');
@@ -76,19 +79,18 @@ const OthelloTable = () => {
   };
 
   const checkLeftCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
-    // 바로 옆 돌이 자신의 돌이면 return false
-    if (x === 0) {
-      return false;
-    }
+    // 맨 왼쪽 돌이면 false
+    if (x === 0) return false;
 
-    if (stoneId === cells[y][x - 1]) {
-      return false;
-    }
-    // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 return false
+    // 바로 옆 돌이 자신의 돌이면 false
+    if (stoneId === cells[y][x - 1]) return false;
+
+    // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 false
     for (let i = x - 1; i >= 0; i--) {
       if (cells[y][i] === 0) {
         return false;
       }
+
       if (cells[y][i] === stoneId) {
         if (turn) {
           console.log('checkLeftCells 왼쪽 중간에 다른 돌이 있고 그 돌이 나랑같음 true');
@@ -107,13 +109,10 @@ const OthelloTable = () => {
 
   const checkUpCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
     // 바로 옆 돌이 자신의 돌이면 return false
-    if (y === 0) {
-      return false;
-    }
+    if (y === 0) return false;
 
-    if (stoneId === cells[y - 1][x]) {
-      return false;
-    }
+    if (stoneId === cells[y - 1][x]) return false;
+
     // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 return false
     for (let i = y - 1; i >= 0; i--) {
       if (cells[i][x] === 0) {
@@ -137,13 +136,10 @@ const OthelloTable = () => {
 
   const checkDownCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
     // 바로 옆 돌이 자신의 돌이면 return false
-    if (y === cells[y].length - 1) {
-      return false;
-    }
+    if (y === cells[y].length - 1) return false;
 
-    if (stoneId === cells[y + 1][x]) {
-      return false;
-    }
+    if (stoneId === cells[y + 1][x]) return false;
+
     // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 return false
     for (let i = y + 1; i < cells.length; i++) {
       if (cells[i][x] === 0) {
@@ -166,13 +162,10 @@ const OthelloTable = () => {
 
   const checkRightDownCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
     // 바로 옆 돌이 자신의 돌이면 return false
-    if (x === cells[y].length - 1 || y === cells.length - 1) {
-      return false;
-    }
+    if (x === cells[y].length - 1 || y === cells.length - 1) return false;
 
-    if (stoneId === cells[y + 1][x + 1]) {
-      return false;
-    }
+    if (stoneId === cells[y + 1][x + 1]) return false;
+
     // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 return false
     for (let i = y + 1; i < cells.length; i++) {
       for (let j = x + 1; j < cells[y].length; j++) {
@@ -200,13 +193,10 @@ const OthelloTable = () => {
 
   const checkLeftUpCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
     // 바로 옆 돌이 자신의 돌이면 return false
-    if (x === 0 || y === 0) {
-      return false;
-    }
+    if (x === 0 || y === 0) return false;
 
-    if (stoneId === cells[y - 1][x - 1]) {
-      return false;
-    }
+    if (stoneId === cells[y - 1][x - 1]) return false;
+
     // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 return false
     for (let i = y - 1; i >= 0; i--) {
       for (let j = x - 1; j >= 0; j--) {
@@ -234,13 +224,10 @@ const OthelloTable = () => {
 
   const checkRightUpCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
     // 바로 옆 돌이 자신의 돌이면 return false
-    if (x === cells[y].length || y === 0) {
-      return false;
-    }
+    if (x === cells[y].length || y === 0) return false;
 
-    if (stoneId === cells[y - 1][x + 1]) {
-      return false;
-    }
+    if (stoneId === cells[y - 1][x + 1]) return false;
+
     // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 return false
     for (let i = y - 1; i >= 0; i--) {
       for (let j = x + 1; j < cells[i].length; j++) {
@@ -268,13 +255,10 @@ const OthelloTable = () => {
 
   const checkLeftDownCells = (x: number, y: number, stoneId: number, turn: boolean): boolean => {
     // 바로 옆 돌이 자신의 돌이면 return false
-    if (x === 0 || y === cells.length - 1) {
-      return false;
-    }
+    if (x === 0 || y === cells.length - 1) return false;
 
-    if (stoneId === cells[y + 1][x - 1]) {
-      return false;
-    }
+    if (stoneId === cells[y + 1][x - 1]) return false;
+
     // for 문을 돌며 상대의 돌이 이어지는지 확인, 만약 비어있다면 return false
     for (let i = y + 1; i < cells.length; i++) {
       for (let j = x - 1; j >= 0; j--) {
@@ -303,33 +287,31 @@ const OthelloTable = () => {
 
   const onClickCell = useCallback(
     (x: number, y: number) => {
-      console.log(x, y);
       const stoneId = isBlackTurn ? 1 : 2;
-      if (!canPut(x, y, stoneId)) {
-        console.log('못놓음ㅋ');
-        return;
-      }
+      console.log(x, y);
+      if (!canPut(x, y, stoneId)) return;
 
-      const num = isBlackTurn ? 1 : 2;
-      setCells((prev) => [...prev.slice(0, y), [...prev[y].slice(0, x), num, ...prev[y].slice(x + 1)], ...prev.slice(y + 1)]);
+      setCells(
+        produce((draft) => {
+          draft[y][x] = stoneId;
+        })
+      );
+
+      console.log(count);
       setIsBlackTurn((prev) => !prev);
-      if (isBlackTurn) {
-        console.log('Black turn');
-      } else {
-        console.log('White turn');
-      }
     },
-    [cells, isBlackTurn]
+    [cells, isBlackTurn, count]
   );
 
   return (
     <div>
       <h1>{isBlackTurn ? 'Black Turn' : 'White Turn'}</h1>
+      <h2>{`둘 수 있는 장소 : ${count}`}</h2>
       {cells.map((row: number[], y) => (
         <Row key={y}>
           {row.map((item: number, x) => (
             <Item onClick={() => onClickCell(x, y)} key={x}>
-              {item === 0 ? canPut(x, y, isBlackTurn ? 1 : 2, false) && <ShowCanPut /> : <Stone item={item} />}
+              {item === 0 ? canPut(x, y, isBlackTurn ? 1 : 2, false) && <CanPutDot /> : <Stone item={item} />}
             </Item>
           ))}
         </Row>

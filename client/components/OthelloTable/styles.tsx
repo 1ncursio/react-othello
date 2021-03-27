@@ -5,8 +5,8 @@ export const Row = styled.div`
 `;
 
 export const Item = styled.div`
-  width: 50px;
-  height: 50px;
+  width: 4rem;
+  height: 4rem;
   background-color: #2eae52;
   border: 1px solid #000;
   display: flex;
@@ -14,19 +14,7 @@ export const Item = styled.div`
   align-items: center;
 `;
 
-export const ShowCanPut = styled.div`
-  width: 20%;
-  height: 20%;
-  border-radius: 50%;
-  background-color: rgba(255, 0, 0, 0.8);
-  box-shadow: 0 0 5px red;
-`;
-
-interface Props {
-  item: number;
-}
-
-export const Stone = styled.div<Props>`
+export const Stone = styled.div<{ item: number }>`
   width: inherit;
   height: inherit;
   border-radius: 50%;
