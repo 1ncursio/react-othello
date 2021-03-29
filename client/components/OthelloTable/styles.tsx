@@ -5,8 +5,8 @@ export const Row = styled.div`
 `;
 
 export const Item = styled.div`
-  width: 4rem;
-  height: 4rem;
+  width: 3rem;
+  height: 3rem;
   background-color: #2eae52;
   border: 1px solid #000;
   display: flex;

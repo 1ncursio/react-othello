@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useAtom } from 'jotai';
-import { blackCountAtom, whiteCountAtom } from '@atoms/';
+import { blackCountAtom, isFinishedAtom, turnCountAtom, whiteCountAtom } from '@atoms/';
 
 const Stone = styled.div<{ item: number }>`
   width: 100%;
@@ -13,6 +13,8 @@ const Stone = styled.div<{ item: number }>`
 const index = ({ item }: { item: number }) => {
   const [blackCount, setBlackCount] = useAtom(blackCountAtom);
   const [whiteCount, setWhiteCount] = useAtom(whiteCountAtom);
+  const [turnCount, setTurnCount] = useAtom(turnCountAtom);
+  const [isFinished, setIsFinished] = useAtom(isFinishedAtom);
 
   useEffect(() => {
     item === 1 ? setBlackCount((c) => c + 1) : setWhiteCount((c) => c + 1);
@@ -20,6 +22,12 @@ const index = ({ item }: { item: number }) => {
       item === 1 ? setBlackCount((c) => c - 1) : setWhiteCount((c) => c - 1);
     };
   }, [item]);
+
+  useEffect(() => {
+    if (turnCount > 0) {
+      if (whiteCount * blackCount === 0 || whiteCount + blackCount === 64) setIsFinished(true);
+    }
+  }, [turnCount, whiteCount, blackCount]);
 
   return <Stone item={item} />;
 };

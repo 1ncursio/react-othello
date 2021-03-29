@@ -13,3 +13,7 @@ export const countAtom = atom<number>(0);
 export const blackCountAtom = atom<number>(0);
 
 export const whiteCountAtom = atom<number>(0);
+
+export const turnCountAtom = atom<number>(0);
+
+export const isFinishedAtom = atom<boolean>(false);
