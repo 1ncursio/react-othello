@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 
 // const arr = Array(8).fill(Array(8).fill(0));
-const initialCells = Array.from({ length: 8 }, () => Array(8).fill(0));
+export const initialCells = Array.from({ length: 8 }, () => Array(8).fill(0));
 
 [initialCells[3][3], initialCells[3][4]] = [1, 2];
 [initialCells[4][3], initialCells[4][4]] = [2, 1];
@@ -17,3 +17,5 @@ export const whiteCountAtom = atom<number>(0);
 export const turnCountAtom = atom<number>(0);
 
 export const isFinishedAtom = atom<boolean>(false);
+
+export const isBlackTurnAtom = atom<boolean>(true);

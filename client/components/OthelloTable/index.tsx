@@ -1,19 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Item, Row } from './styles';
 import { useAtom } from 'jotai';
 import produce from 'immer';
 import CanPutDot from '@components/CanPutDot';
-import { countAtom, cellsAtom, blackCountAtom, whiteCountAtom, turnCountAtom, isFinishedAtom } from '@atoms/';
+import { countAtom, cellsAtom, turnCountAtom, isBlackTurnAtom } from '@atoms/';
 import Stone from '@components/Stone';
 
 const OthelloTable = () => {
   const [cells, setCells] = useAtom(cellsAtom);
-  const [isBlackTurn, setIsBlackTurn] = useState(true);
+  const [isBlackTurn, setIsBlackTurn] = useAtom(isBlackTurnAtom);
   const [count] = useAtom(countAtom);
-  const [blackCount] = useAtom(blackCountAtom);
-  const [whiteCount] = useAtom(whiteCountAtom);
-  const [turnCount, setTurnCount] = useAtom(turnCountAtom);
-  const [isFinished, setIsFinished] = useAtom(isFinishedAtom);
+  const [, setTurnCount] = useAtom(turnCountAtom);
 
   useEffect(() => {
     if (count === 0) setIsBlackTurn((prev) => !prev);
@@ -302,12 +299,6 @@ const OthelloTable = () => {
 
   return (
     <div>
-      <h1>{isBlackTurn ? 'Black Turn' : 'White Turn'}</h1>
-      <h2>{`둘 수 있는 장소 : ${count}`}</h2>
-      <h3>{`검은 돌 : ${blackCount}`}</h3>
-      <h3>{`흰 돌 : ${whiteCount}`}</h3>
-      <h4>{`${turnCount}번째 수입니다.`}</h4>
-      {isFinished && <h5>겜끝ㅋ</h5>}
       {cells.map((row: number[], y) => (
         <Row key={y}>
           {row.map((item: number, x) => (
