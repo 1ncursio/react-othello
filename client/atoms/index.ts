@@ -19,3 +19,7 @@ export const turnCountAtom = atom<number>(0);
 export const isFinishedAtom = atom<boolean>(false);
 
 export const isBlackTurnAtom = atom<boolean>(true);
+
+export const stackAtom = atom<number[][][]>([]);
+
+// export const stackIndexAtom = atom<number>(0);

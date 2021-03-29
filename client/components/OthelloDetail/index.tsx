@@ -1,4 +1,14 @@
-import { blackCountAtom, cellsAtom, countAtom, initialCells, isBlackTurnAtom, isFinishedAtom, turnCountAtom, whiteCountAtom } from '@atoms/';
+import {
+  blackCountAtom,
+  cellsAtom,
+  countAtom,
+  initialCells,
+  isBlackTurnAtom,
+  isFinishedAtom,
+  stackAtom,
+  turnCountAtom,
+  whiteCountAtom,
+} from '@atoms/';
 import produce from 'immer';
 import { useAtom } from 'jotai';
 import React, { useCallback } from 'react';
@@ -11,11 +21,33 @@ const index = () => {
   const [whiteCount] = useAtom(whiteCountAtom);
   const [count] = useAtom(countAtom);
   const [isBlackTurn] = useAtom(isBlackTurnAtom);
-  const [turnCount] = useAtom(turnCountAtom);
+  const [turnCount, setTurnCount] = useAtom(turnCountAtom);
   const [isFinished] = useAtom(isFinishedAtom);
+  const [stack] = useAtom(stackAtom);
+
+  const onClickLeft = useCallback(() => {
+    console.log('감기');
+    setCells(
+      produce((draft) => {
+        draft = stack[count - 1];
+      })
+    );
+  }, [stack, count]);
+
+  const onClickRight = useCallback(() => {}, []);
 
   const onClickRestart = useCallback(() => {
     console.log('clicked');
+    setCells(
+      produce((draft) => {
+        for (let i = 0; i < draft.length; i++) {
+          draft[i] = Array(8).fill(0);
+        }
+        [draft[3][3], draft[3][4]] = [1, 2];
+        [draft[4][3], draft[4][4]] = [2, 1];
+      })
+    );
+    setTurnCount(0);
     // setCells();
   }, [cells]);
 
@@ -31,10 +63,10 @@ const index = () => {
       {isFinished && <h5>겜끝ㅋ</h5>}
       {!isFinished && <button onClick={onClickRestart}>다시 시작</button>}
       <ButtonContainer>
-        <Button>
+        <Button onClick={onClickLeft}>
           <BiLeftArrow />
         </Button>
-        <Button>
+        <Button onClick={onClickRight}>
           <BiRightArrow />
         </Button>
       </ButtonContainer>
