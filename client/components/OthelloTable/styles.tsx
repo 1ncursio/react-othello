@@ -5,18 +5,15 @@ export const Row = styled.div`
 `;
 
 export const Item = styled.div`
-  width: 3rem;
-  height: 3rem;
-  background-color: #2eae52;
-  border: 1px solid #000;
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: #45925d;
+  border: 2px solid #37764b;
   display: flex;
   justify-content: center;
   align-items: center;
-`;
 
-export const Stone = styled.div<{ item: number }>`
-  width: inherit;
-  height: inherit;
-  border-radius: 50%;
-  background-color: ${({ item }) => (item === 1 ? 'black' : 'white')};
+  &:hover {
+    background-color: #5ea875;
+  }
 `;

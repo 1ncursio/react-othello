@@ -3,7 +3,7 @@ import { Item, Row } from './styles';
 import { useAtom } from 'jotai';
 import produce from 'immer';
 import CanPutDot from '@components/CanPutDot';
-import { countAtom, cellsAtom, turnCountAtom, isBlackTurnAtom, stackAtom } from '@atoms/';
+import { countAtom, cellsAtom, turnCountAtom, isBlackTurnAtom, stackAtom, skipCountAtom } from '@atoms/';
 import Stone from '@components/Stone';
 
 const OthelloTable = () => {
@@ -12,7 +12,7 @@ const OthelloTable = () => {
   const [count] = useAtom(countAtom);
   const [turnCount, setTurnCount] = useAtom(turnCountAtom);
   const [stack, setStack] = useAtom(stackAtom);
-  // const [stackIndex, setStackIndex] = useAtom(stackIndexAtom);
+  const [skipCount, setSkipCount] = useAtom(skipCountAtom);
 
   useEffect(() => {
     setStack(
@@ -23,7 +23,10 @@ const OthelloTable = () => {
   }, []);
 
   useEffect(() => {
-    if (count === 0 && turnCount !== 0) setIsBlackTurn((prev) => !prev);
+    if (count === 0 && turnCount !== 0) {
+      setSkipCount((c) => c + 1);
+      setIsBlackTurn((prev) => !prev);
+    }
   }, [count]);
 
   const canPut = (x: number, y: number, stoneId: number, turn: boolean = true) => {

@@ -14,11 +14,8 @@ const index = () => {
   const [turnCount, setTurnCount] = useAtom(turnCountAtom);
   const [isFinished] = useAtom(isFinishedAtom);
   const [stack, setStack] = useAtom(stackAtom);
-  //   const [stackIndex, setStackIndex] = useAtom(stackIndexAtom);
 
   const onClickLeft = useCallback(() => {
-    // if (turnCount < 1) return;
-
     setTurnCount((c) => c - 1);
     setStack(
       produce((draft) => {
@@ -59,14 +56,13 @@ const index = () => {
       <h2>{`둘 수 있는 장소 : ${count}`}</h2>
       <h4>{`${turnCount + 1}번째 수입니다.`}</h4>
       {isFinished && <h5>겜끝ㅋ</h5>}
-      {!isFinished && <button onClick={onClickRestart}>다시 시작</button>}
       <ButtonContainer>
         <Button onClick={onClickLeft} disabled={turnCount < 1}>
           <BiLeftArrow />
           무르기
         </Button>
+        <Button onClick={onClickRestart}>다시 시작</Button>
       </ButtonContainer>
-      <button onClick={() => console.log(stack)}>보기</button>
     </div>
   );
 };

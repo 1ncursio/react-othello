@@ -4,11 +4,12 @@ import { useAtom } from 'jotai';
 import { countAtom } from '@atoms/';
 
 const Dot = styled.div`
-  width: 20%;
-  height: 20%;
+  cursor: pointer;
+  width: 80%;
+  height: 80%;
   border-radius: 50%;
-  background-color: rgba(255, 0, 0, 0.8);
-  box-shadow: 0 0 0.5rem red;
+  background-color: rgba(36, 36, 36, 0.3);
+  box-shadow: 0 0 0.3rem (36, 36, 36, 0.5);
 `;
 
 const index = () => {

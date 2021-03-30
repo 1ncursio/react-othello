@@ -4,10 +4,21 @@ import { useAtom } from 'jotai';
 import { blackCountAtom, isFinishedAtom, turnCountAtom, whiteCountAtom } from '@atoms/';
 
 const Stone = styled.div<{ item: number }>`
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
   border-radius: 50%;
   background-color: ${({ item }) => (item === 1 ? 'black' : 'white')};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 3px 0 5px rgba(0, 0, 0, 0.7);
+
+  div {
+    width: 70%;
+    height: 70%;
+    border: 1px solid ${({ item }) => (item !== 1 ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.2)')};
+    border-radius: 50%;
+  }
 `;
 
 const index = ({ item }: { item: number }) => {
@@ -29,7 +40,11 @@ const index = ({ item }: { item: number }) => {
     }
   }, [turnCount, whiteCount, blackCount]);
 
-  return <Stone item={item} />;
+  return (
+    <Stone item={item}>
+      <div />
+    </Stone>
+  );
 };
 
 export default index;
