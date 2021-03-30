@@ -11,6 +11,8 @@ export const Score = styled.div`
 `;
 
 export const Button = styled.button`
+  display: flex;
+  align-items: center;
   background-color: #4e4e4e;
   color: #ffffff;
   border: none;

@@ -1,14 +1,4 @@
-import {
-  blackCountAtom,
-  cellsAtom,
-  countAtom,
-  initialCells,
-  isBlackTurnAtom,
-  isFinishedAtom,
-  stackAtom,
-  turnCountAtom,
-  whiteCountAtom,
-} from '@atoms/';
+import { blackCountAtom, cellsAtom, countAtom, isBlackTurnAtom, isFinishedAtom, stackAtom, turnCountAtom, whiteCountAtom } from '@atoms/';
 import produce from 'immer';
 import { useAtom } from 'jotai';
 import React, { useCallback } from 'react';
@@ -23,18 +13,26 @@ const index = () => {
   const [isBlackTurn] = useAtom(isBlackTurnAtom);
   const [turnCount, setTurnCount] = useAtom(turnCountAtom);
   const [isFinished] = useAtom(isFinishedAtom);
-  const [stack] = useAtom(stackAtom);
+  const [stack, setStack] = useAtom(stackAtom);
+  //   const [stackIndex, setStackIndex] = useAtom(stackIndexAtom);
 
   const onClickLeft = useCallback(() => {
-    console.log('감기');
-    setCells(
+    // if (turnCount < 1) return;
+
+    setTurnCount((c) => c - 1);
+    setStack(
       produce((draft) => {
-        draft = stack[count - 1];
+        draft.pop();
       })
     );
-  }, [stack, count]);
-
-  const onClickRight = useCallback(() => {}, []);
+    setCells(
+      produce((draft) => {
+        for (let i = 0; i < draft.length; i++) {
+          draft[i] = stack[stack.length - 1][i];
+        }
+      })
+    );
+  }, [cells, stack, turnCount]);
 
   const onClickRestart = useCallback(() => {
     console.log('clicked');
@@ -59,17 +57,16 @@ const index = () => {
       </Score>
       <h1>{isBlackTurn ? '검은 돌' : '흰 돌'} 차례입니다.</h1>
       <h2>{`둘 수 있는 장소 : ${count}`}</h2>
-      <h4>{`${turnCount}번째 수입니다.`}</h4>
+      <h4>{`${turnCount + 1}번째 수입니다.`}</h4>
       {isFinished && <h5>겜끝ㅋ</h5>}
       {!isFinished && <button onClick={onClickRestart}>다시 시작</button>}
       <ButtonContainer>
-        <Button onClick={onClickLeft}>
+        <Button onClick={onClickLeft} disabled={turnCount < 1}>
           <BiLeftArrow />
-        </Button>
-        <Button onClick={onClickRight}>
-          <BiRightArrow />
+          무르기
         </Button>
       </ButtonContainer>
+      <button onClick={() => console.log(stack)}>보기</button>
     </div>
   );
 };

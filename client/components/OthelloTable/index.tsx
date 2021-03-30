@@ -10,11 +10,20 @@ const OthelloTable = () => {
   const [cells, setCells] = useAtom(cellsAtom);
   const [isBlackTurn, setIsBlackTurn] = useAtom(isBlackTurnAtom);
   const [count] = useAtom(countAtom);
-  const [, setTurnCount] = useAtom(turnCountAtom);
+  const [turnCount, setTurnCount] = useAtom(turnCountAtom);
   const [stack, setStack] = useAtom(stackAtom);
+  // const [stackIndex, setStackIndex] = useAtom(stackIndexAtom);
 
   useEffect(() => {
-    if (count === 0) setIsBlackTurn((prev) => !prev);
+    setStack(
+      produce((draft) => {
+        draft.push(cells);
+      })
+    );
+  }, []);
+
+  useEffect(() => {
+    if (count === 0 && turnCount !== 0) setIsBlackTurn((prev) => !prev);
   }, [count]);
 
   const canPut = (x: number, y: number, stoneId: number, turn: boolean = true) => {
@@ -298,10 +307,9 @@ const OthelloTable = () => {
         })
       );
 
-      console.log(count);
       setIsBlackTurn((prev) => !prev);
     },
-    [cells, isBlackTurn, count]
+    [cells, isBlackTurn, count, stack]
   );
 
   return (
