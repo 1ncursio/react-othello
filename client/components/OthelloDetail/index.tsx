@@ -12,7 +12,7 @@ const index = () => {
   const [count] = useAtom(countAtom);
   const [isBlackTurn] = useAtom(isBlackTurnAtom);
   const [turnCount, setTurnCount] = useAtom(turnCountAtom);
-  const [isFinished] = useAtom(isFinishedAtom);
+  const [isFinished, setIsFinished] = useAtom(isFinishedAtom);
   const [stack, setStack] = useAtom(stackAtom);
 
   const onClickLeft = useCallback(() => {
@@ -43,6 +43,7 @@ const index = () => {
       })
     );
     setTurnCount(0);
+    setIsFinished(false);
     // setCells();
   }, [cells]);
 

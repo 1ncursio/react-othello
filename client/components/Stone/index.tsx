@@ -13,15 +13,31 @@ const Stone = styled.div<{ item: number }>`
   align-items: center;
   box-shadow: 3px 0 5px rgba(0, 0, 0, 0.7);
 
-  div {
+  .circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 70%;
     height: 70%;
     border: 1px solid ${({ item }) => (item !== 1 ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.2)')};
     border-radius: 50%;
   }
+
+  .last-put {
+    /* position: relative; */
+    /* z-index: -10; */
+    width: 20%;
+    height: 20%;
+    background-color: red;
+  }
 `;
 
-const index = ({ item }: { item: number }) => {
+interface Props {
+  item: number;
+  isLastPut: boolean;
+}
+
+const index = ({ item, isLastPut }: Props) => {
   const [blackCount, setBlackCount] = useAtom(blackCountAtom);
   const [whiteCount, setWhiteCount] = useAtom(whiteCountAtom);
   const [turnCount, setTurnCount] = useAtom(turnCountAtom);
@@ -42,7 +58,7 @@ const index = ({ item }: { item: number }) => {
 
   return (
     <Stone item={item}>
-      <div />
+      <div className="circle">{isLastPut && <div className="last-put" />}</div>
     </Stone>
   );
 };

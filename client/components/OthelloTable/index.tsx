@@ -3,7 +3,7 @@ import { Item, Row } from './styles';
 import { useAtom } from 'jotai';
 import produce from 'immer';
 import CanPutDot from '@components/CanPutDot';
-import { countAtom, cellsAtom, turnCountAtom, isBlackTurnAtom, stackAtom, skipCountAtom } from '@atoms/';
+import { countAtom, cellsAtom, turnCountAtom, isBlackTurnAtom, stackAtom, skipCountAtom, lastPutPositionAtom } from '@atoms/';
 import Stone from '@components/Stone';
 
 const OthelloTable = () => {
@@ -13,6 +13,7 @@ const OthelloTable = () => {
   const [turnCount, setTurnCount] = useAtom(turnCountAtom);
   const [stack, setStack] = useAtom(stackAtom);
   const [skipCount, setSkipCount] = useAtom(skipCountAtom);
+  const [lastPutPosition, setLastPutPosition] = useAtom(lastPutPositionAtom);
 
   useEffect(() => {
     setStack(
@@ -311,8 +312,14 @@ const OthelloTable = () => {
       );
 
       setIsBlackTurn((prev) => !prev);
+      setLastPutPosition(
+        produce((draft) => {
+          draft[0] = x;
+          draft[1] = y;
+        })
+      );
     },
-    [cells, isBlackTurn, count, stack]
+    [cells, isBlackTurn, count, stack, lastPutPosition]
   );
 
   return (
@@ -321,7 +328,11 @@ const OthelloTable = () => {
         <Row key={y}>
           {row.map((item: number, x) => (
             <Item onClick={() => onClickCell(x, y)} key={x}>
-              {item === 0 ? canPut(x, y, isBlackTurn ? 1 : 2, false) && <CanPutDot /> : <Stone item={item} />}
+              {item === 0 ? (
+                canPut(x, y, isBlackTurn ? 1 : 2, false) && <CanPutDot />
+              ) : (
+                <Stone item={item} isLastPut={lastPutPosition.toString() === [x, y].toString()} />
+              )}
             </Item>
           ))}
         </Row>

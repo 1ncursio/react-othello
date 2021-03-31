@@ -3,7 +3,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 const Header = styled.header`
-  height: 80px;
+  height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,6 +11,7 @@ const Header = styled.header`
 
   h1 {
     margin: 0;
+    font-size: 1.5rem;
   }
 `;
 

@@ -22,6 +22,6 @@ export const isBlackTurnAtom = atom<boolean>(true);
 
 export const stackAtom = atom<number[][][]>([]);
 
-// export const stackIndexAtom = atom<number>(0);
-
 export const skipCountAtom = atom<number>(0);
+
+export const lastPutPositionAtom = atom<number[]>([-1, -1]);
